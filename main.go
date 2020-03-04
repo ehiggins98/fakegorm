@@ -140,13 +140,14 @@ func (it *DB) setOutputParams(params ...interface{}) error {
 	}
 
 	for i := range params {
-		if i > len(it.expectations[it.index].Output) {
+		if i >= len(it.expectations[it.index].Output) {
 			break
 		}
 
 		t := reflect.TypeOf(params[i])
 		if t.Kind() != reflect.Ptr {
-			return errors.New("Out parameters must be pointers")
+			msg := fmt.Sprintf("Out parameters must be pointers. Got kind %v.", t.Kind())
+			return errors.New(msg)
 		}
 
 		deepCopy(it.expectations[it.index].Output[i], params[i])
