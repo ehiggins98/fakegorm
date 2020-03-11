@@ -64,7 +64,8 @@ func (e *expectation) WithParams(params ...interface{}) *expectation {
 
 func (e *expectation) WithOutput(output ...interface{}) *expectation {
 	for i := range output {
-		e.Output = append(e.Output, output[i])
+		copy := Copy(output[i])
+		e.Output = append(e.Output, copy)
 	}
 
 	return e
@@ -184,7 +185,7 @@ func (it *DB) New() *DB {
 }
 
 func (it *DB) Select(params ...interface{}) *DB {
-	it.query(params)
+	it.query(params...)
 	return it
 }
 
@@ -234,6 +235,26 @@ func (it *DB) Where(params ...interface{}) *DB {
 }
 
 func (it *DB) Model(value interface{}) *DB {
+	it.query(value)
+	return it
+}
+
+func (it *DB) Table(value interface{}) *DB {
+	it.query(value)
+	return it
+}
+
+func (it *DB) Joins(value interface{}) *DB {
+	it.query(value)
+	return it
+}
+
+func (it *DB) Scan(value interface{}) *DB {
+	it.query(value)
+	return it
+}
+
+func (it *DB) Delete(value interface{}) *DB {
 	it.query(value)
 	return it
 }
