@@ -57,7 +57,8 @@ func (it *DB) ExpectCall(fn string) *expectation {
 
 func (e *expectation) WithParams(params ...interface{}) *expectation {
 	for i := range params {
-		e.Params = append(e.Params, params[i])
+		copy := Copy(params[i])
+		e.Params = append(e.Params, copy)
 	}
 	return e
 }
