@@ -35,9 +35,20 @@ type Model struct {
 	DeletedAt *time.Time
 }
 
+type Association struct {
+	Error error
+}
+
 func Open(dialect string, args ...interface{}) (*DB, error) {
 	db, _, err := sqlmock.New()
 	return &DB{db: db}, err
+}
+
+func (it *DB) Reset() {
+	it.Error = nil
+	it.expectations = nil
+	it.index = 0
+	it.testErrors = nil
 }
 
 func (it *DB) ExpectationsMet() error {
@@ -185,6 +196,18 @@ func (it *DB) New() *DB {
 	return &DB{db: db}
 }
 
+func (it *DB) Begin() *DB {
+	return it
+}
+
+func (it *DB) Commit() *DB {
+	return it
+}
+
+func (it *DB) Rollback() *DB {
+	return it
+}
+
 func (it *DB) Select(params ...interface{}) *DB {
 	it.query(params...)
 	return it
@@ -240,6 +263,11 @@ func (it *DB) Model(value interface{}) *DB {
 	return it
 }
 
+func (it *DB) Association(association string) *Association {
+	it.query(association)
+	return &Association{}
+}
+
 func (it *DB) Table(value interface{}) *DB {
 	it.query(value)
 	return it
@@ -258,4 +286,17 @@ func (it *DB) Scan(value interface{}) *DB {
 func (it *DB) Delete(value interface{}) *DB {
 	it.query(value)
 	return it
+}
+
+func (it *DB) AutoMigrate(model interface{}) *DB {
+	it.query(model)
+	return it
+}
+
+func (association *Association) Append(values ...interface{}) *Association {
+	return &Association{}
+}
+
+func (association *Association) Delete(values ...interface{}) *Association {
+	return &Association{}
 }
